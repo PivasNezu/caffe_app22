@@ -1,0 +1,33 @@
+name: caffe_app
+description: A new Flutter project.
+publish_to: none
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  yandex_mapkit: ^4.2.1
+  provider: ^6.0.5
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  fonts:
+  - family: Montserrat
+    fonts:
+      - asset: assets/fonts/Montserrat-SemiBold.ttf
+        weight: 600
+      - asset: assets/fonts/Montserrat-Bold.ttf
+        weight: 700
+      - asset: assets/fonts/Montserrat-ExtraBold.ttf
+        weight: 800
+  uses-material-design: true      
+
