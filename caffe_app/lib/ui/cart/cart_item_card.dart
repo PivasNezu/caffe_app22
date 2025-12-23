@@ -7,10 +7,7 @@ import '../../../../providers/cart_provider.dart';
 class CartItemCard extends StatelessWidget {
   final CartItem item;
 
-  const CartItemCard({
-    Key? key,
-    required this.item,
-  }) : super(key: key);
+  const CartItemCard({Key? key, required this.item}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -41,10 +38,12 @@ class CartItemCard extends StatelessWidget {
               ),
             ),
             child: Center(
-              child: Image.asset(
-                item.imageUrl, // assets/images/latte.png
+              child: Image.network(
+                item.imageUrl,
                 height: 70,
                 fit: BoxFit.contain,
+                errorBuilder: (_, __, ___) =>
+                    const Icon(Icons.coffee, size: 40),
               ),
             ),
           ),
@@ -87,7 +86,7 @@ class CartItemCard extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       GestureDetector(
-                        onTap: () => cart.decrement(item.id),
+                        onTap: () => cart.decrement(item.id, item.size),
                         child: const Text(
                           '−',
                           style: TextStyle(
@@ -106,7 +105,7 @@ class CartItemCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       GestureDetector(
-                        onTap: () => cart.increment(item.id),
+                        onTap: () => cart.increment(item.id, item.size),
                         child: const Text(
                           '+',
                           style: TextStyle(

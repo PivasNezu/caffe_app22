@@ -1,15 +1,17 @@
 class CartItem {
-  final String id;
+  final String id;        // id товара
   final String name;
-  final int price; // В КОПЕЙКАХ / РУБЛЯХ — ЧИСЛО
   final String imageUrl;
-  int quantity;
+  final String size;      // ВАЖНО
+  final int price;        // цена за 1
+  int quantity;           // количество
 
   CartItem({
     required this.id,
     required this.name,
-    required this.price,
     required this.imageUrl,
+    required this.size,
+    required this.price,
     required this.quantity,
   });
 }

@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
-import '../data/cart_repository.dart';
 import '../models/cart_item.dart';
 
 class CartProvider extends ChangeNotifier {
-  final CartRepository repository;
-
-  CartProvider(this.repository);
-
-  List<CartItem> _items = [];
+  final List<CartItem> _items = [];
   bool _useBonus = false;
 
   List<CartItem> get items => _items;
@@ -18,30 +13,40 @@ class CartProvider extends ChangeNotifier {
       0,
       (prev, item) => prev + item.price * item.quantity,
     );
-
     return _useBonus ? sum - 100 : sum;
   }
 
-  Future<void> loadCart() async {
-    _items = await repository.fetchCartItems();
+  void addItem(CartItem item) {
+    final index = _items.indexWhere(
+      (e) => e.id == item.id && e.size == item.size,
+    );
+
+    if (index != -1) {
+      _items[index].quantity++;
+    } else {
+      _items.add(item);
+    }
+
     notifyListeners();
   }
 
-  void increment(String id) {
-    final item = _items.firstWhere((e) => e.id == id);
+  void increment(String id, String size) {
+    final item =
+        _items.firstWhere((e) => e.id == id && e.size == size);
     item.quantity++;
     notifyListeners();
-    repository.updateQuantity(id, item.quantity);
   }
 
-  void decrement(String id) {
-    final index = _items.indexWhere((e) => e.id == id);
+  void decrement(String id, String size) {
+    final index =
+        _items.indexWhere((e) => e.id == id && e.size == size);
+
     if (index == -1) return;
 
     if (_items[index].quantity > 1) {
       _items[index].quantity--;
     } else {
-      _items.removeAt(index); // 🔥 удаление при 0
+      _items.removeAt(index);
     }
 
     notifyListeners();
@@ -52,3 +57,4 @@ class CartProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+

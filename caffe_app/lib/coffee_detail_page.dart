@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'models/coffee_item.dart'; // чтобы использовать CoffeeItem
+import 'package:provider/provider.dart';
+import '../../providers/cart_provider.dart';
+import '../../models/cart_item.dart';
 
 class CoffeeDetailPage extends StatefulWidget {
   final CoffeeItemSize item;
@@ -23,26 +26,12 @@ class _CoffeeDetailPageState extends State<CoffeeDetailPage> {
         child: Column(
           children: [
             // ---------- HEADER ----------
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                  const Spacer(),
-                  const Icon(Icons.notifications_outlined),
-                ],
-              ),
-            ),
+            const SizedBox(height: 42), // небольшой отступ вместо удалённого Row
 
-            // ---------- IMAGE ----------
+            // ---------- COFFEE CARD ----------
             Container(
-              height: 260,
               margin: const EdgeInsets.symmetric(horizontal: 32),
               decoration: BoxDecoration(
-                color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
@@ -51,42 +40,68 @@ class _CoffeeDetailPageState extends State<CoffeeDetailPage> {
                   ),
                 ],
               ),
-              child: Center(
-                child: Image.network(
-                  widget.item.imageUrl,
-                  height: 200,
-                  fit: BoxFit.contain,
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            // ---------- NAME + RATING ----------
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    widget.item.name,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
+                  // --- TOP (IMAGE) ---
+                  Container(
+                    height: 220,
+                    decoration: const BoxDecoration(
+                      color: Color.fromRGBO(255, 238, 186, 1),
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(20),
+                      ),
+                    ),
+                    child: Center(
+                      child: Image.network(
+                        widget.item.imageUrl,
+                        height: 180,
+                        fit: BoxFit.contain,
+                      ),
                     ),
                   ),
-                  Row(
-                    children: [
-                      const Icon(Icons.star, color: Colors.amber, size: 18),
-                      const SizedBox(width: 4),
-                      Text(
-                        widget.item.rating.toString(),
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
+
+                  // --- BOTTOM (NAME + RATING) ---
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    decoration: const BoxDecoration(
+                      color: Color.fromRGBO(255, 246, 218, 1),
+                      borderRadius: BorderRadius.vertical(
+                        bottom: Radius.circular(20),
                       ),
-                    ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          widget.item.name,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              widget.item.rating.toString(),
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -116,7 +131,9 @@ class _CoffeeDetailPageState extends State<CoffeeDetailPage> {
                         margin: const EdgeInsets.symmetric(horizontal: 6),
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         decoration: BoxDecoration(
-                          color: isSelected ? Colors.black : Colors.white,
+                          color: isSelected
+                              ? Colors.black
+                              : Color.fromRGBO(255, 246, 218, 1),
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Column(
@@ -126,13 +143,15 @@ class _CoffeeDetailPageState extends State<CoffeeDetailPage> {
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w700,
-                                color: isSelected ? Colors.white : Colors.black,
+                                color: isSelected
+                                    ? Color.fromRGBO(255, 246, 218, 1)
+                                    : Colors.black,
                               ),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               price != null
-                                  ? '\$${price}'
+                                  ? '${price} ₽'
                                   : '-', // проверка на null
                               style: TextStyle(
                                 color: isSelected
@@ -164,10 +183,32 @@ class _CoffeeDetailPageState extends State<CoffeeDetailPage> {
                       borderRadius: BorderRadius.circular(18),
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    final sizeName = sizes[selectedSize];
+                    final price = widget.item.prices[sizeName];
+
+                    if (price == null) return;
+
+                    final cartItem = CartItem(
+                      id: widget.item.id,
+                      name: widget.item.name,
+                      imageUrl: widget.item.imageUrl,
+                      size: sizeName,
+                      price: price,
+                      quantity: 1,
+                    );
+
+                    context.read<CartProvider>().addItem(cartItem);
+
+                    Navigator.pop(context); // возвращаемся назад
+                  },
                   child: const Text(
                     'Добавить',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: Color.fromRGBO(255, 255, 255, 1),
+                    ),
                   ),
                 ),
               ),

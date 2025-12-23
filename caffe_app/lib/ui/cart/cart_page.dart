@@ -6,7 +6,6 @@ import 'cart_summary.dart';
 
 
 import '../../../providers/cart_provider.dart';
-import '../../../data/cart_repository.dart';
 import '../../../models/cart_item.dart';
 
 class CartPage extends StatelessWidget {
@@ -14,10 +13,7 @@ class CartPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => CartProvider(CartRepository())..loadCart(),
-      child: const _CartView(),
-    );
+    return const _CartView();
   }
 }
 
