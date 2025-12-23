@@ -14,9 +14,7 @@ class CoffeeShopAppWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => CartProvider()),
-      ],
+      providers: [ChangeNotifierProvider(create: (_) => CartProvider())],
       child: const CoffeeShopApp(),
     );
   }
@@ -56,6 +54,12 @@ class _CoffeeShopPageState extends State<CoffeeShopPage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+
+    _tabController.addListener(() {
+      if (_tabController.indexIsChanging == false) {
+        setState(() {});
+      }
+    });
   }
 
   @override

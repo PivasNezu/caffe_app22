@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'providers/location_provider.dart';
 import 'models/coffee_item.dart'; // чтобы использовать CoffeeItem
 import 'package:provider/provider.dart';
 import '../../providers/cart_provider.dart';
 import '../../models/cart_item.dart';
+import 'map.dart';
 
 class CoffeeDetailPage extends StatefulWidget {
   final CoffeeItemSize item;
@@ -25,52 +27,98 @@ class _CoffeeDetailPageState extends State<CoffeeDetailPage> {
       body: SafeArea(
         child: Column(
           children: [
-            // ---------- HEADER ----------
-            const SizedBox(height: 42), // небольшой отступ вместо удалённого Row
+            const SizedBox(height: 12),
+            // GEO LOCATION 
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Consumer<LocationProvider>(
+                builder: (_, location, __) => InkWell(
+                  borderRadius: BorderRadius.circular(12),
+                  onTap: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => MapPage()),
+                    );
+                  },
+                  child: Column(
+                    children: [
+                      const Text(
+                        'локация',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF7B7166),
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            location.location,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          const Icon(
+                            Icons.keyboard_arrow_down,
+                            size: 18,
+                            color: Colors.black54,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
 
+            const SizedBox(height: 24),
             // ---------- COFFEE CARD ----------
             Container(
-              margin: const EdgeInsets.symmetric(horizontal: 32),
+              margin: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(28),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.15),
-                    blurRadius: 20,
+                    color: Colors.black.withOpacity(0.18),
+                    blurRadius: 28,
+                    offset: const Offset(0, 10),
                   ),
                 ],
               ),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
                 children: [
-                  // --- TOP (IMAGE) ---
+                  // IMAGE
                   Container(
-                    height: 220,
+                    height: 350,
                     decoration: const BoxDecoration(
                       color: Color.fromRGBO(255, 238, 186, 1),
                       borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(20),
+                        top: Radius.circular(28),
                       ),
                     ),
                     child: Center(
                       child: Image.network(
                         widget.item.imageUrl,
-                        height: 180,
+                        height: 240,
                         fit: BoxFit.contain,
                       ),
                     ),
                   ),
 
-                  // --- BOTTOM (NAME + RATING) ---
+                  // NAME + RATING
                   Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
+                      horizontal: 20,
+                      vertical: 16,
                     ),
                     decoration: const BoxDecoration(
                       color: Color.fromRGBO(255, 246, 218, 1),
                       borderRadius: BorderRadius.vertical(
-                        bottom: Radius.circular(20),
+                        bottom: Radius.circular(28),
                       ),
                     ),
                     child: Row(
@@ -79,8 +127,8 @@ class _CoffeeDetailPageState extends State<CoffeeDetailPage> {
                         Text(
                           widget.item.name,
                           style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
+                            fontSize: 26,
+                            fontWeight: FontWeight.w800,
                           ),
                         ),
                         Row(
@@ -88,14 +136,14 @@ class _CoffeeDetailPageState extends State<CoffeeDetailPage> {
                             const Icon(
                               Icons.star,
                               color: Colors.amber,
-                              size: 18,
+                              size: 22,
                             ),
-                            const SizedBox(width: 4),
+                            const SizedBox(width: 6),
                             Text(
                               widget.item.rating.toString(),
                               style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                                fontSize: 24,
+                                fontWeight: FontWeight.w700,
                               ),
                             ),
                           ],
@@ -111,60 +159,63 @@ class _CoffeeDetailPageState extends State<CoffeeDetailPage> {
 
             // ---------- SIZE SELECTOR ----------
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Row(
-                children: List.generate(sizes.length, (index) {
-                  final sizeName = sizes[index]; // название размера
-                  final isSelected = selectedSize == index;
-                  final price = widget
-                      .item
-                      .prices[sizeName]; // цена для выбранного размера
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+              
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: const Color.fromRGBO(255, 246, 218, 1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  children: List.generate(sizes.length, (index) {
+                    final size = sizes[index];
+                    final isSelected = selectedSize == index;
+                    final price = widget.item.prices[size];
 
-                  return Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          selectedSize = index;
-                        });
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 6),
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        decoration: BoxDecoration(
-                          color: isSelected
-                              ? Colors.black
-                              : Color.fromRGBO(255, 246, 218, 1),
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Column(
-                          children: [
-                            Text(
-                              sizeName,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                                color: isSelected
-                                    ? Color.fromRGBO(255, 246, 218, 1)
-                                    : Colors.black,
+                    return Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() => selectedSize = index);
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? Colors.black
+                                : Colors.transparent,
+                            borderRadius: BorderRadius.circular(32),
+                          ),
+                          child: Column(
+                            children: [
+                              Text(
+                                size,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w800,
+                                  color: isSelected
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              price != null
-                                  ? '${price} ₽'
-                                  : '-', // проверка на null
-                              style: TextStyle(
-                                color: isSelected
-                                    ? Colors.white70
-                                    : Colors.black54,
+                              const SizedBox(height: 3),
+                              Text(
+                                price != null ? '$price ₽' : '-',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: isSelected
+                                      ? Colors.white70
+                                      : Colors.black54,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                }),
+                    );
+                  }),
+                ),
               ),
             ),
 

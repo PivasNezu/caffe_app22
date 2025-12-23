@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'providers/cart_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'ui/reg/login.dart';
+import 'providers/location_provider.dart';
 import 'ui/reg/register.dart';
 import 'main_page.dart'; // твоя основная страница после логина
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -16,7 +17,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => CartProvider()),
-        // сюда можно добавить другие провайдеры
+        ChangeNotifierProvider(create: (_) => LocationProvider()),
       ],
       child: MyApp(isLoggedIn: isLoggedIn),
     ),
