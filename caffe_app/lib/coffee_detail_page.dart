@@ -18,17 +18,16 @@ class CoffeeDetailPage extends StatefulWidget {
 class _CoffeeDetailPageState extends State<CoffeeDetailPage> {
   int selectedSize = 1;
 
-  final sizes = ['S', 'M', 'L'];
-
   @override
   Widget build(BuildContext context) {
+    final sizes = widget.item.prices.keys.toList();
     return Scaffold(
       backgroundColor: const Color.fromRGBO(255, 238, 186, 1),
       body: SafeArea(
         child: Column(
           children: [
             const SizedBox(height: 12),
-            // GEO LOCATION 
+            // GEO LOCATION
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Consumer<LocationProvider>(
@@ -80,7 +79,7 @@ class _CoffeeDetailPageState extends State<CoffeeDetailPage> {
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(28),
+                borderRadius: BorderRadius.circular(18),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.18),
@@ -118,7 +117,7 @@ class _CoffeeDetailPageState extends State<CoffeeDetailPage> {
                     decoration: const BoxDecoration(
                       color: Color.fromRGBO(255, 246, 218, 1),
                       borderRadius: BorderRadius.vertical(
-                        bottom: Radius.circular(28),
+                        bottom: Radius.circular(18),
                       ),
                     ),
                     child: Row(
@@ -160,61 +159,73 @@ class _CoffeeDetailPageState extends State<CoffeeDetailPage> {
             // ---------- SIZE SELECTOR ----------
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-              
               child: Container(
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 28,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
                   color: const Color.fromRGBO(255, 246, 218, 1),
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(18),
                 ),
-                child: Row(
-                  children: List.generate(sizes.length, (index) {
-                    final size = sizes[index];
-                    final isSelected = selectedSize == index;
-                    final price = widget.item.prices[size];
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final sizes = widget.item.prices.keys.take(5).toList();
 
-                    return Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() => selectedSize = index);
-                        },
-                        child: AnimatedContainer(
-                          duration: const Duration(milliseconds: 200),
-                          padding: const EdgeInsets.symmetric(vertical: 4),
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? Colors.black
-                                : Colors.transparent,
-                            borderRadius: BorderRadius.circular(32),
-                          ),
-                          child: Column(
-                            children: [
-                              Text(
-                                size,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w800,
-                                  color: isSelected
-                                      ? Colors.white
-                                      : Colors.black,
-                                ),
+                    return Row(
+                      children: List.generate(sizes.length, (index) {
+                        final size = sizes[index];
+                        final isSelected = selectedSize == index;
+                        final price = widget.item.prices[size];
+
+                        return Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() => selectedSize = index);
+                            },
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 200),
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? Colors.black
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(32),
                               ),
-                              const SizedBox(height: 3),
-                              Text(
-                                price != null ? '$price ₽' : '-',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: isSelected
-                                      ? Colors.white70
-                                      : Colors.black54,
-                                ),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    size,
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w800,
+                                      color: isSelected
+                                          ? Colors.white
+                                          : Colors.black,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 3),
+                                  Text(
+                                    price != null ? '$price ₽' : '-',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: isSelected
+                                          ? Colors.white70
+                                          : Colors.black54,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
-                        ),
-                      ),
+                        );
+                      }),
                     );
-                  }),
+                  },
                 ),
               ),
             ),

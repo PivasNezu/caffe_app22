@@ -33,5 +33,7 @@ flutter:
         weight: 700
       - asset: assets/fonts/Montserrat-ExtraBold.ttf
         weight: 800
-  uses-material-design: true      
+  uses-material-design: true     
+  assets:
+    - assets/icons/ 
 

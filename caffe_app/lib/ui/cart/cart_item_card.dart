@@ -14,7 +14,7 @@ class CartItemCard extends StatelessWidget {
     final cart = context.read<CartProvider>();
 
     return Container(
-      height: 110,
+      height: 140,
       decoration: BoxDecoration(
         color: const Color.fromRGBO(255, 246, 218, 1),
         borderRadius: BorderRadius.circular(20),
@@ -53,11 +53,12 @@ class CartItemCard extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Название + цена
                   Expanded(
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [

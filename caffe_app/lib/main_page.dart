@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'styles/coffee_text_styles.dart';
 import 'package:caffe_app/ui/cart/cart_page.dart';
 import 'map.dart';
+import 'profile_page.dart';
 import 'providers/cart_provider.dart';
 import 'models/coffee_item.dart';
 import 'coffee_detail_page.dart';
@@ -115,33 +116,6 @@ class _CoffeeShopPageState extends State<CoffeeShopPage>
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.5),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(8),
-                        onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Левая кнопка нажата'),
-                              duration: Duration(seconds: 1),
-                            ),
-                          );
-                        },
-                        child: const Icon(
-                          Icons.menu,
-                          color: Colors.black54,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-                  ),
                   Expanded(
                     child: Center(
                       child: InkWell(
@@ -171,7 +145,7 @@ class _CoffeeShopPageState extends State<CoffeeShopPage>
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(
+                              const Text(
                                 'локация',
                                 style: TextStyle(
                                   fontSize: 14,
@@ -183,7 +157,7 @@ class _CoffeeShopPageState extends State<CoffeeShopPage>
                                 selectedPoint != null
                                     ? selectedPoint!['name']
                                     : 'Выберите локацию',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
                                   color: Colors.black87,
@@ -199,7 +173,7 @@ class _CoffeeShopPageState extends State<CoffeeShopPage>
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.5),
+                      color: const Color.fromRGBO(255, 238, 186, 1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Material(
@@ -207,17 +181,17 @@ class _CoffeeShopPageState extends State<CoffeeShopPage>
                       child: InkWell(
                         borderRadius: BorderRadius.circular(8),
                         onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Правая кнопка нажата'),
-                              duration: Duration(seconds: 1),
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const ProfilePage(),
                             ),
                           );
                         },
                         child: const Icon(
-                          Icons.notifications_outlined,
+                          Icons.person, // иконка профиля
                           color: Colors.black54,
-                          size: 20,
+                          size: 25,
                         ),
                       ),
                     ),

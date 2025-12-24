@@ -16,6 +16,29 @@ class CartProvider extends ChangeNotifier {
     return _useBonus ? sum - 100 : sum;
   }
 
+  // ===== ДОБАВЛЕНО =====
+  void clear() {
+    _items.clear();
+    _useBonus = false;
+    notifyListeners();
+  }
+
+  // ===== ДОБАВЛЕНО =====
+  void addFromOrder(CartItem item) {
+    _items.add(
+      CartItem(
+        id: item.id,
+        name: item.name,
+        imageUrl: item.imageUrl,
+        price: item.price,
+        size: item.size,
+        quantity: item.quantity,
+      ),
+    );
+    notifyListeners();
+  }
+
+  // ===== СТАРОЕ =====
   void addItem(CartItem item) {
     final index = _items.indexWhere(
       (e) => e.id == item.id && e.size == item.size,
@@ -31,15 +54,17 @@ class CartProvider extends ChangeNotifier {
   }
 
   void increment(String id, String size) {
-    final item =
-        _items.firstWhere((e) => e.id == id && e.size == size);
+    final item = _items.firstWhere(
+      (e) => e.id == id && e.size == size,
+    );
     item.quantity++;
     notifyListeners();
   }
 
   void decrement(String id, String size) {
-    final index =
-        _items.indexWhere((e) => e.id == id && e.size == size);
+    final index = _items.indexWhere(
+      (e) => e.id == id && e.size == size,
+    );
 
     if (index == -1) return;
 
@@ -57,4 +82,3 @@ class CartProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
-

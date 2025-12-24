@@ -11,7 +11,7 @@ class CoffeeDatabase {
         rating: 4.2,
         imageUrl:
             'https://images.unsplash.com/photo-1561882468-9110e03e0f78?w=400',
-        prices: {'S': 250, 'M': 340, 'L': 520},
+        prices: {'S': 250, 'M': 340, 'X': 340, 'L': 520},
       ),
       CoffeeItemSize(
         id: '2',
