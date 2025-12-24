@@ -8,6 +8,7 @@ import 'providers/cart_provider.dart';
 import 'models/coffee_item.dart';
 import 'coffee_detail_page.dart';
 import 'data/coffee_database.dart';
+import '../providers/location_provider.dart';
 
 class CoffeeShopAppWrapper extends StatelessWidget {
   const CoffeeShopAppWrapper({Key? key}) : super(key: key);
@@ -114,84 +115,83 @@ class _CoffeeShopPageState extends State<CoffeeShopPage>
             // Заголовок с кнопками
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Row(
+              width: double.infinity, // растягиваем на весь экран
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
-                  Expanded(
-                    child: Center(
-                      child: InkWell(
+                  // Гео-локация по центру
+                  Consumer<LocationProvider>(
+                    builder: (context, locationProvider, child) {
+                      final selectedPoint = locationProvider.selectedPoint;
+
+                      return InkWell(
                         borderRadius: BorderRadius.circular(8),
                         onTap: () async {
-                          final selectedPoint = await Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => MapPage()),
-                          );
-
-                          if (selectedPoint != null) {
-                            print('Выбранная точка: ${selectedPoint['name']}');
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  'Вы выбрали: ${selectedPoint['name']}',
-                                ),
-                              ),
-                            );
-                          }
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 4,
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Text(
-                                'локация',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF7B7166),
-                                ),
-                              ),
-                              Text(
-                                selectedPoint != null
-                                    ? selectedPoint!['name']
-                                    : 'Выберите локацию',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: const Color.fromRGBO(255, 238, 186, 1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(8),
-                        onTap: () {
-                          Navigator.push(
+                          final point = await Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const ProfilePage(),
+                              builder: (context) => const MapPage(),
                             ),
                           );
+
+                          if (point != null) {
+                            locationProvider.setLocation(point);
+                          }
                         },
-                        child: const Icon(
-                          Icons.person, // иконка профиля
-                          color: Colors.black54,
-                          size: 25,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                              'Локация',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF7B7166),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              selectedPoint?['name'] ?? 'Выберите локацию',
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+
+                  // Иконка профиля справа
+                  Positioned(
+                    right: 0,
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: const Color.fromRGBO(255, 238, 186, 1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(8),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const ProfilePage(),
+                              ),
+                            );
+                          },
+                          child: const Icon(
+                            Icons.person,
+                            color: Colors.black54,
+                            size: 25,
+                          ),
                         ),
                       ),
                     ),
@@ -250,10 +250,26 @@ class _CoffeeShopPageState extends State<CoffeeShopPage>
           child: InkWell(
             borderRadius: BorderRadius.circular(5),
             onTap: () {
-              Navigator.push(
+              final locationProvider = Provider.of<LocationProvider>(
                 context,
-                MaterialPageRoute(builder: (context) => const CartPage()),
+                listen: false,
               );
+
+              if (locationProvider.selectedPoint == null) {
+                // Показываем SnackBar, если локация не выбрана
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Сначала выберите кофейню'),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              } else {
+                // Переходим в корзину
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const CartPage()),
+                );
+              }
             },
             child: const Icon(
               Icons.arrow_outward,

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'providers/location_provider.dart';
-import 'models/coffee_item.dart'; // чтобы использовать CoffeeItem
 import 'package:provider/provider.dart';
+
 import '../../providers/cart_provider.dart';
+import '../../providers/location_provider.dart';
+import '../../models/coffee_item.dart';
 import '../../models/cart_item.dart';
 import 'map.dart';
 
@@ -16,65 +17,67 @@ class CoffeeDetailPage extends StatefulWidget {
 }
 
 class _CoffeeDetailPageState extends State<CoffeeDetailPage> {
-  int selectedSize = 1;
+  int selectedSize = 0;
 
   @override
   Widget build(BuildContext context) {
     final sizes = widget.item.prices.keys.toList();
+
     return Scaffold(
       backgroundColor: const Color.fromRGBO(255, 238, 186, 1),
       body: SafeArea(
         child: Column(
           children: [
             const SizedBox(height: 12),
-            // GEO LOCATION
+
+            // ---------------- GEO LOCATION ----------------
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Consumer<LocationProvider>(
-                builder: (_, location, __) => InkWell(
-                  borderRadius: BorderRadius.circular(12),
-                  onTap: () async {
-                    await Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => MapPage()),
-                    );
-                  },
-                  child: Column(
-                    children: [
-                      const Text(
-                        'локация',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF7B7166),
+                builder: (_, locationProvider, __) {
+                  final selectedPoint = locationProvider.selectedPoint;
+
+                  return InkWell(
+                    borderRadius: BorderRadius.circular(12),
+                    onTap: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const MapPage()),
+                      );
+                    },
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'Локация',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF7B7166),
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 2),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            location.location,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w800,
-                            ),
+                        const SizedBox(height: 4),
+                        Text(
+                          selectedPoint != null
+                              ? selectedPoint['name']
+                              : 'Выберите локацию',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
                           ),
-                          const SizedBox(width: 6),
-                          const Icon(
-                            Icons.keyboard_arrow_down,
-                            size: 18,
-                            color: Colors.black54,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
             ),
 
             const SizedBox(height: 24),
+
             // ---------- COFFEE CARD ----------
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),

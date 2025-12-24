@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 class LocationProvider extends ChangeNotifier {
-  String _location = 'Выберите локацию';
+  Map<String, dynamic>? _selectedPoint;
 
-  String get location => _location;
+  Map<String, dynamic>? get selectedPoint => _selectedPoint;
 
-  void setLocation(String value) {
-    _location = value;
+  void setLocation(Map<String, dynamic> point) {
+    _selectedPoint = point;
     notifyListeners();
   }
 }
