@@ -1,33 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:flutter/services.dart';
 
-class LoginPage extends StatefulWidget {
-  final VoidCallback onLoginSuccess;
-  final VoidCallback onRegisterTap;
+class CodeConfirmPage extends StatefulWidget {
+  final VoidCallback onConfirmSuccess;
+  final VoidCallback onBack;
 
-  const LoginPage({
+  const CodeConfirmPage({
     super.key,
-    required this.onLoginSuccess,
-    required this.onRegisterTap,
+    required this.onConfirmSuccess,
+    required this.onBack,
   });
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<CodeConfirmPage> createState() => _CodeConfirmPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  final TextEditingController phoneController = TextEditingController();
+class _CodeConfirmPageState extends State<CodeConfirmPage> {
+  final TextEditingController codeController = TextEditingController();
 
-  void tryLogin() {
-    if (phoneController.text.trim().isEmpty) {
+  void tryConfirm() {
+    if (codeController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Пожалуйста, введите номер телефона")),
+        const SnackBar(content: Text("Введите код подтверждения")),
       );
       return;
     }
 
-    widget.onRegisterTap(); // переход к коду
+    // тут позже можно добавить реальную проверку кода
+    widget.onConfirmSuccess();
   }
 
   @override
@@ -40,82 +40,59 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Верхний блок: логотип + название
             Padding(
               padding: const EdgeInsets.only(top: 20),
               child: Column(
-                children: [
+                children: const [
                   Text(
-                    "Добро",
-                    style: const TextStyle(
+                    "Введите",
+                    style: TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 32,
                       fontWeight: FontWeight.w700,
-                      color: Colors.black87,
                     ),
                   ),
                   Text(
-                    "Пожаловать",
-                    style: const TextStyle(
+                    "код подтверждения",
+                    style: TextStyle(
                       fontFamily: 'Montserrat',
                       fontSize: 32,
                       fontWeight: FontWeight.w700,
-                      color: Colors.black87,
                     ),
                   ),
-                  const SizedBox(height: 80), // отступ вместо логотипа
+                  SizedBox(height: 80),
                 ],
               ),
             ),
 
-            const SizedBox(height: 110), // расстояние от логотипа до блока
-            // Средний блок: поле + кнопка + ссылка
+            const SizedBox(height: 110),
+
             Center(
               child: Column(
-                mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Поле телефона
                   SizedBox(
                     width: fieldWidth,
-                    child: IntlPhoneField(
-                      controller: phoneController,
-                      initialCountryCode: 'RU',
-                      showCountryFlag: false,
+                    child: TextField(
+                      controller: codeController,
                       keyboardType: TextInputType.number,
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      readOnly: false,
-                      disableLengthCheck: false,
                       decoration: InputDecoration(
-                        hintText: 'Телефон',
-                        hintStyle: const TextStyle(color: Color(0xFF7B7166)),
-                        counterText: '',
+                        hintText: 'Код',
                         filled: true,
                         fillColor: Colors.white.withOpacity(0.6),
-                        contentPadding: const EdgeInsets.fromLTRB(
-                          10,
-                          8,
-                          10,
-                          10,
-                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(9),
-                          borderSide: const BorderSide(color: Colors.black),
                         ),
-                      ),
-                      style: const TextStyle(
-                        color: Colors.black87,
-                        fontFamily: 'Montserrat',
                       ),
                     ),
                   ),
 
                   const SizedBox(height: 20),
 
-                  // Кнопка "Войти"
                   SizedBox(
                     width: fieldWidth,
                     child: ElevatedButton(
-                      onPressed: tryLogin,
+                      onPressed: tryConfirm,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black,
                         shape: RoundedRectangleBorder(
@@ -124,9 +101,8 @@ class _LoginPageState extends State<LoginPage> {
                         padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
                       child: const Text(
-                        "Получить код",
+                        "Войти",
                         style: TextStyle(
-                          fontFamily: 'Montserrat',
                           fontWeight: FontWeight.w700,
                           fontSize: 16,
                           color: Colors.white,
@@ -137,12 +113,21 @@ class _LoginPageState extends State<LoginPage> {
 
                   const SizedBox(height: 10),
 
-                  // Ссылка на регистрацию
+                  GestureDetector(
+                    onTap: widget.onBack,
+                    child: const Text(
+                      "Назад",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF7B7166),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
 
-            const Spacer(), // оставшееся пространство внизу
+            const Spacer(),
           ],
         ),
       ),

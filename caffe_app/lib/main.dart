@@ -7,7 +7,7 @@ import 'providers/cart_provider.dart';
 import 'providers/location_provider.dart';
 
 import 'ui/reg/login.dart';
-import 'ui/reg/register.dart';
+import 'ui/reg/code_confirm.dart';
 
 import 'main_page.dart'; // CoffeeShopPage
 
@@ -58,7 +58,6 @@ class MyApp extends StatelessWidget {
         Locale('ru', 'RU'),
       ],
 
-      // ✅ ГЛАВНОЕ МЕСТО
       home: isLoggedIn
           ? const CoffeeShopPage()
           : const AuthWrapper(),
@@ -67,7 +66,7 @@ class MyApp extends StatelessWidget {
 }
 
 /// ─────────────────────────────
-/// Обёртка логина / регистрации
+/// Обёртка авторизации
 class AuthWrapper extends StatefulWidget {
   const AuthWrapper({super.key});
 
@@ -96,17 +95,16 @@ class _AuthWrapperState extends State<AuthWrapper> {
   Widget build(BuildContext context) {
     return showLogin
         ? LoginPage(
-            onLoginSuccess: _onAuthSuccess,
+            onLoginSuccess: () {}, // не используется
             onRegisterTap: () {
               setState(() => showLogin = false);
             },
           )
-        : RegisterPage(
-            onRegisterSuccess: _onAuthSuccess,
-            onLoginTap: () {
+        : CodeConfirmPage(
+            onConfirmSuccess: _onAuthSuccess,
+            onBack: () {
               setState(() => showLogin = true);
             },
           );
   }
 }
-
